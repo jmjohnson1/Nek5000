@@ -2348,7 +2348,7 @@ c     -------------------------------------------------
       endif
 
 c     Quick check on maximum #dofs:
-      m    = nxyz*nelt
+      m    = nxyz*nel
       ngvm = i8glmax(glo_num,m)
       ngvv = ngvv + ngve + ngvs  ! number of unique ids w/o interior 
       ngvi = ngvi + ngvv         ! total number of unique ids 
@@ -2445,7 +2445,7 @@ c     Assign a number (rank) to each unique edge
       do i=1,4*nel
          enum(i,1) = etuple(3,i)
       enddo
-      n_unique_edges = iglmax(enum,4*nel)
+      n_unique_edges = i8glmax(enum,4*nel)
 
 c= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 c     Assign global vertex numbers to SEM nodes on each edge
@@ -2521,7 +2521,7 @@ c
       endif
 
 c     Quick check on maximum #dofs:
-      m    = nxyz*nelt
+      m    = nxyz*nel
       ngvm = i8glmax(glo_num,m)
       ngvv = ngvv + ngve         ! number of unique ids w/o interior 
       ngvi = ngvi + ngvv         ! total number of unique ids 
