@@ -295,7 +295,8 @@ C     Laplacian formulation only
      $     CB.EQ.'MSI' .OR.  CB.EQ.'msi'    )                GOTO 9001
 
        IF ( .NOT.IFALGN .AND.
-     $    (CB.EQ.'ON ' .OR.  CB.EQ.'on ' .OR. CB.EQ.'SYM') ) GOTO 9010
+     $    (CB.EQ.'ON ' .OR.  CB.EQ.'on ' .OR. CB.EQ.'SYM' .OR.
+     $    CB.EQ.'mxn') ) GOTO 9010
 
       RETURN
 
@@ -412,6 +413,12 @@ C
      $            CALL FACEV (V2MASK,IEL,IFACE,0.0,lx1,ly1,lz1)
              IF ( IFNORZ )
      $            CALL FACEV (V3MASK,IEL,IFACE,0.0,lx1,ly1,lz1)
+             GOTO 100
+         ENDIF
+
+         IF (CB.EQ.'mxn') THEN
+             IF ( .NOT.IFALGN .OR. IFNORY )
+     $            CALL FACEV (V1MASK,IEL,IFACE,0.0,lx1,ly1,lz1)
              GOTO 100
          ENDIF
 
@@ -653,6 +660,12 @@ c     write(6,*) 'BCDIRV: ifield',ifield
                 IF ( IFQINP(IFACE,IE) )
      $          CALL GLOBROT (TMP1(1,1,1,IE),TMP2(1,1,1,IE),
      $                        TMP3(1,1,1,IE),IE,IFACE)
+            ENDIF
+
+            IF (CB.EQ.'mxn') then
+
+                call faceiv (cb,tmp1(1,1,1,ie),tmp2(1,1,1,ie),
+     $                       tmp3(1,1,1,ie),ie,iface,lx1,ly1,lz1)
             ENDIF
 
             IF (CB.EQ.'ON ' .OR. CB.EQ.'on ') then   ! 5/21/01 pff
@@ -1033,6 +1046,19 @@ C
             V2(IX,IY,IZ) = UY
             V3(IX,IY,IZ) = UZ
   100    CONTINUE
+         RETURN
+C
+      ELSEIF (CB.EQ.'mxn') THEN
+C
+         DO 110 IZ=KZ1,KZ2
+         DO 110 IY=KY1,KY2
+         DO 110 IX=KX1,KX2
+            if (optlevel.le.2) CALL NEKASGN (IX,IY,IZ,IEL)
+            CALL USERBC  (IX,IY,IZ,IFACE,IEG)
+            V1(IX,IY,IZ) = UX
+            V2(IX,IY,IZ) = 0.0
+            V3(IX,IY,IZ) = 0.0
+  110    CONTINUE
          RETURN
 C
       elseif (cb1(1).eq.'d'.or.cb1(2).eq.'d'.or.cb1(3).eq.'d') then
